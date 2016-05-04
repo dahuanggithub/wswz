@@ -1,15 +1,17 @@
 <template>
   <div id="app">
   <weather></weather>
+  <todo></todo>
   </div>
 </template>
 
 <script>
 import Weather from './components/Weather'
+import Todo from './components/Todo'
 
 export default {
   components: {
-    Weather
+    Weather,Todo
   }
 }
 </script>
