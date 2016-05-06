@@ -2,7 +2,7 @@
   <div class="weather">
     <h2 class="city-name">{{ weatherData.basic.city }}</h2>
     <div class="weather-icon">
-      <i class="iconfont">&#xe600;</i>
+      <i class="iconfont" v-bind:class="['icon-'+weatherData.now.cond.code]"></i>
       <span>{{ weatherData.now.cond.txt }}</span>
     </div>
     <div class="temp">
@@ -32,6 +32,7 @@ export default {
         weather_5d = weather_json.daily_forecast.slice(1,6)
         this.$set('weather_5d',  weather_5d)
         return
+      }else{
       }
       // GET request
       this.$http({url: 'https://api.heweather.com/x3/weather?cityid=CN101210303&key=4462f5e166c5416593a64ba001e8e15f', method: 'GET'}).then(function (response) {
@@ -122,11 +123,11 @@ export default {
 }
 .update-time{
   position: absolute;
-  bottom: -12px;
+  bottom: 90px;
   width: 100%;
   text-align: center;
   font-size: 10px;
-  color: #ccc;
+  color: rgba(255,255,255,.25);
 }
 .weather-icon{
   float: left;

@@ -1,19 +1,223 @@
 <template>
   <div class="todo">
-    <h4>todo</h4>
+    
+    <div class="todo-add">
+      <span>Todo List</span>
+      <span v-on:click="toggle_add()" class="add-btn" v-bind:class="{ 'add-btn-active': add }"></span>
+    </div>
+    <div class="add-new" v-bind:class="{ 'add-new-show': add }">
+    <textarea name="" id="" cols="30" rows="7" v-show="add" placeholder="What would you record ?"></textarea>
+    <div v-show="add"><i class="iconfont_todo" >&#xe600;</i><input type="range" name="points" min="1" max="100" v-model = "range_time"/>{{ range_time }}</div>
+    </div>
+    <div class="todo-lists">
+      <div class="todo-list" v-for = "todo in todos">
+        <div class="todo-time">
+          <div v-on:click="toggle_alert($index)"><i class="iconfont_todo todo-alert-icon" v-bind:class="{ 'todo-alert-icon-true': todo.alert }">&#xe600;</i></div>
+          <div>{{ todo.time }}</div>
+        </div>
+        <div class="todo-content">
+          {{ todo.content }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 
-<script></script>
+<script>
+  export default {
+    data: function() {
+      return{
+        add: false,
+        range_time: 1,
+        todos: [
+          {
+            id:1,
+            time: '7:00',
+            alert: true,
+            content: '上传服务器'
+          },{
+            id:2,
+            time: '15:00',
+            alert: false,
+            content:'上传服务器'
+          },{
+            id:3,
+            time: '9:00',
+            alert: true,
+            content:'上传服务器'
+          },{
+            id:4,
+            time: '4:00',
+            alert: true,
+            content:'上传服务器'
+          },{
+            id:5,
+            time: '12:00',
+            alert: true,
+            content:'上传服务器'
+          },{
+            id:6,
+            time: "13:00",
+            alert: true,
+            content:'上传服务器'
+          }
+        ]
+
+      }
+    },
+
+    methods: {
+    toggle_alert: function(index){
+      this.todos[index].alert = this.todos[index].alert?false:true
+    },
+    toggle_add: function(){
+      this.add = this.add?false:true
+    }
+  }
+  }
+</script>
 
 
 <style scoped>
-  .todo{
-    position: absolute;
-    margin-top: 270px;
-    width: 100%;
-    height: 200px;
-    overflow: scroll;
-  }
+@font-face {
+  font-family: 'iconfont_todo';
+  src: url('../assets/todo_iconfont/iconfont.eot'); /* IE9*/
+  src: url('../assets/todo_iconfont/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../assets/todo_iconfont/iconfont.woff') format('woff'), /* chrome、firefox */
+  url('../assets/todo_iconfont/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+  url('../assets/todo_iconfont/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+}
+.iconfont_todo{
+  font-family: "iconfont_todo" !important;
+  font-size: 24px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}
+.todo{
+  position: absolute;
+  margin-top: 270px;
+  width: 100%;
+  height: 270px;
+  overflow-y: scroll;
+}
+.todo-add{
+  position: fixed;
+  width: 100%;
+  height: 50px;
+  background: rgba(255,255,255,.8);
+}
+.todo-add span:nth-child(1){
+ color: #999;
+ font-size: 18px;
+ line-height: 50px;
+ position: relative;
+ left: 15px;
+ float: left;
+}
+.add-btn{
+  position: absolute;
+  right: 15px;
+  display: block;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 100%;
+  background-color: #00D92C;
+  box-shadow: 0 4px 5px rgba(0,197,40,.25);
+  -webkit-transition: all 0.25s;
+  -o-transition: all 0.25s;
+  transition: all 0.25s;
+  z-index: 10;
+}
+.add-btn:after,.add-btn:before{
+  position: absolute;
+  left: 10px;
+  top: 18px;
+  content: "";
+  width: 20px;
+  height: 4px;
+  background-color: rgba(255,255,255,.8);
+}
+.add-btn:after{
+  top: 10px;
+  left: 18px;
+  width: 4px;
+  height: 20px;
+}
+.add-btn-active{
+  -webkit-transform: rotate(-135deg);
+  -ms-transform: rotate(-135deg);
+  -o-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+  background-color: #F54263;
+  box-shadow: -3px -3px 5px rgba(223,19,40,.2);
+}
+.todo-lists{
+  margin-top: 50px;
+}
+.todo-list{
+  width: 100%;
+  height: 50px;
+}
+.todo-time{
+  float: left;
+  width: 15%;
+  height: 100%;
+  background-color: #f3f3f3;
+}
+.todo-time div{
+  width: 100%;
+  height: 50%;
+}
+.todo-time div:nth-child(2){
+  background: #fdfdfd;
+  color: #aaa;
+  font-size: 16px;
+}
+.todo-content{
+  padding: 14px 0 14px 20px;
+  color: #aaa;
+  width: 75%;
+  overflow: hidden;
+  float: left;
+  text-align: left;
+  font-size: 16px;
+  border-top: 1px solid #f3f3f3;
+}
+.todo-alert-icon{
+  font-size: 24px;
+  line-height: 22px;
+  color: #ccc;
+}
+.todo-alert-icon-true{
+  color: #12C902;
+}
+.add-new{
+  width: 100%;
+  height: 0px;
+  background: #fff;
+  -webkit-transition: height 0.2s;
+  -o-transition: height 0.2s;
+  transition: height 0.2s;
+}
+.add-new-show{
+  height: 250px;
+}
+textarea{
+  margin-top: 60px;
+  width: 90%;
+  border: 0;
+  font-size: 20px;
+  line-height: 20px;
+  font-weight: 100;
+}
+input[trpe='range'] {
+  border: 2;
+  color: #ddd;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {  
+} 
 </style>

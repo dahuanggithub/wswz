@@ -24,6 +24,15 @@ html {
 *{
   margin: 0;
   padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  outline: none;
+  -webkit-tap-highlight-color: transparent; /* 触摸点击元素背景透明 */
+}
+*:not(input,textarea) { 
+-webkit-touch-callout: none; 
+  -webkit-user-select: none; 
 }
 
 #app {
