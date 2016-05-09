@@ -6,12 +6,16 @@
       <span v-on:click="toggle_add()" class="add-btn" v-bind:class="{ 'add-btn-active': add }"></span>
     </div>
     <div class="add-new" v-bind:class="{ 'add-new-show': add }">
-    <textarea name="" id="" cols="30" rows="7" v-show="add" placeholder="What would you record ?"></textarea>
+
+    <textarea name="" id="" cols="30" rows="7" v-show="add" placeholder="What would you record ?" v-model="add_todo"></textarea>
+
     <div class="todo-time-set" v-show="add">
       <i class="iconfont_todo" v-bind:class="{ 'todo-alert-icon-true': range>=0 }" @click="reset_time">&#xe600;</i>
       <span>{{ range_time }}</span>
       <input type="range" name="points" min="-1" max="72" v-model = "range"/>
-      <span class="ok-btn"></span>
+
+      <span class="ok-btn" @click="submit_todo"></span>
+
     </div>
     </div>
     <div class="todo-lists">
@@ -22,7 +26,7 @@
           </div>
           <div>{{ todo.time }}</div>
         </div>
-        <div class="todo-content">
+        <div class="todo-content" @click="modify_todo($index)">
           {{ todo.content }}
         </div>
       </div>
@@ -37,40 +41,10 @@
       return{
         add: false,
         range: -1,
-       
-        todos: [
-          {
-            id:1,
-            time: '7:00',
-            alert: true,
-            content: '上传服务器'
-          },{
-            id:2,
-            time: '15:00',
-            alert: false,
-            content:'上传服务器'
-          },{
-            id:3,
-            time: '9:00',
-            alert: true,
-            content:'上传服务器'
-          },{
-            id:4,
-            time: '4:00',
-            alert: true,
-            content:'上传服务器'
-          },{
-            id:5,
-            time: '12:00',
-            alert: true,
-            content:'上传服务器'
-          },{
-            id:6,
-            time: "13:00",
-            alert: true,
-            content:'上传服务器'
-          }
-        ]
+
+        add_todo:'',
+        todos: []
+
 
       }
     },
@@ -96,6 +70,25 @@
       },
       reset_time: function(){
         this.range = -1
+
+      },
+      submit_todo: function(){
+        var text = this.add_todo.trim()
+        var time = this.range_time.trim()
+        if(text){
+          if(time=='不提醒'){
+          this.todos.push({content: text,alert: false,})
+          }else{
+            this.todos.push({content: text,alert: true,time: time})
+            this.range = -1
+          }
+          this.add = false
+          this.add_todo = ''
+        }
+      },
+      modify_todo: function(index){
+        this.add = true
+        this.add_todo = this.todos[index].content
       }
     }
   }
@@ -123,11 +116,10 @@
   position: absolute;
   margin-top: 270px;
   width: 100%;
-  height: 270px;
-  overflow-y: scroll;
+  
 }
 .todo-add{
-  position: fixed;
+  position: absolute;
   width: 100%;
   height: 50px;
   background: rgba(255,255,255,.8);
@@ -181,6 +173,8 @@
 
 .todo-lists{
   margin-top: 50px;
+  height: 270px;
+  overflow-y: scroll;
 }
 .todo-list{
   width: 100%;
@@ -220,18 +214,20 @@
   color: #12C902;
 }
 .add-new{
+  position: absolute;
+  margin-top: 50px;
   width: 100%;
   height: 0px;
   background: #fff;
-  -webkit-transition: height 0.2s;
-  -o-transition: height 0.2s;
-  transition: height 0.2s;
+  overflow: hidden;
+  -webkit-transition: height 0.3s;
+  -o-transition: height 0.3s;
+  transition: height 0.3s;
 }
 .add-new-show{
   height: 250px;
 }
 textarea{
-  margin-top: 60px;
   width: 90%;
   border: 0;
   font-size: 16px;
@@ -239,6 +235,7 @@ textarea{
   font-weight: 100;
 }
 .todo-time-set{
+  margin-top: 20px;
   margin-left: 20px;
   text-align: left;
   font-size: 14px;

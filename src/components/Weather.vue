@@ -55,15 +55,15 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 @font-face {
-  font-family: 'iconfont';
-  src: url('../assets/weather_iconfont/iconfont.eot'); /* IE9*/
-  src: url('../assets/weather_iconfont/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('../assets/weather_iconfont/iconfont.woff') format('woff'), /* chrome、firefox */
-  url('../assets/weather_iconfont/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-  url('../assets/weather_iconfont/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+  font-family: 'iconfont_weather';
+  src: url('../assets/weather_iconfont/iconfont.eot'); 
+  src: url('../assets/weather_iconfont/iconfont.eot?#iefix') format('embedded-opentype'),
+  url('../assets/weather_iconfont/iconfont.woff') format('woff'), 
+  url('../assets/weather_iconfont/iconfont.ttf') format('truetype'), 
+  url('../assets/weather_iconfont/iconfont.svg#iconfont') format('svg'); 
 }
 .iconfont{
-  font-family: "iconfont" !important;
+  font-family: "iconfont_weather" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
