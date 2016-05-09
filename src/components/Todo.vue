@@ -40,6 +40,8 @@
     data: function() {
       return{
         add: false,
+        modify: false,
+        modify_index: 0,
         range: -1,
 
         add_todo:'',
@@ -66,6 +68,8 @@
         this.todos[index].alert = this.todos[index].alert?false:true
       },
       toggle_add: function(){
+        this.add_todo = ''
+        this.range = -1
         this.add = this.add?false:true
       },
       reset_time: function(){
@@ -75,11 +79,33 @@
       submit_todo: function(){
         var text = this.add_todo.trim()
         var time = this.range_time.trim()
+        var range = this.range
+        if(this.modify == true){
+          var index = this.modify_index
+          if(text){
+            this.todos[index].content = text
+            this.todos[index].range = range
+            if(time == '不提醒'){
+              this.todos[index].alert = false
+            }else{
+              this.todos[index].alert = true
+              this.todos[index].time = time
+              this.todos[index].range = range
+              this.range = -1
+            }
+          }else{
+            this.todos.splice(index,1)
+          }
+          this.add = false
+          this.modify = false
+          this.add_todo = ''
+          return
+        }
         if(text){
           if(time=='不提醒'){
-          this.todos.push({content: text,alert: false,})
+          this.todos.push({content: text,alert: false,time:'',range: -1})
           }else{
-            this.todos.push({content: text,alert: true,time: time})
+            this.todos.push({content: text,alert: true,time: time,range: range})
             this.range = -1
           }
           this.add = false
@@ -88,7 +114,15 @@
       },
       modify_todo: function(index){
         this.add = true
+        this.modify = true
+        this.modify_index = index
         this.add_todo = this.todos[index].content
+        if(this.todos[index].range&&this.todos[index].alert==true){
+          this.range = this.todos[index].range
+        }else{
+          this.range = -1
+        }
+
       }
     }
   }
