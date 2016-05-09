@@ -7,12 +7,19 @@
     </div>
     <div class="add-new" v-bind:class="{ 'add-new-show': add }">
     <textarea name="" id="" cols="30" rows="7" v-show="add" placeholder="What would you record ?"></textarea>
-    <div v-show="add"><i class="iconfont_todo" >&#xe600;</i><input type="range" name="points" min="1" max="100" v-model = "range_time"/>{{ range_time }}</div>
+    <div class="todo-time-set" v-show="add">
+      <i class="iconfont_todo" v-bind:class="{ 'todo-alert-icon-true': range>=0 }" @click="reset_time">&#xe600;</i>
+      <span>{{ range_time }}</span>
+      <input type="range" name="points" min="-1" max="72" v-model = "range"/>
+      <span class="ok-btn"></span>
+    </div>
     </div>
     <div class="todo-lists">
       <div class="todo-list" v-for = "todo in todos">
         <div class="todo-time">
-          <div v-on:click="toggle_alert($index)"><i class="iconfont_todo todo-alert-icon" v-bind:class="{ 'todo-alert-icon-true': todo.alert }">&#xe600;</i></div>
+          <div v-on:click="toggle_alert($index)">
+            <i class="iconfont_todo todo-alert-icon" v-bind:class="{ 'todo-alert-icon-true': todo.alert }">&#xe600;</i>
+          </div>
           <div>{{ todo.time }}</div>
         </div>
         <div class="todo-content">
@@ -29,7 +36,8 @@
     data: function() {
       return{
         add: false,
-        range_time: 1,
+        range: -1,
+       
         todos: [
           {
             id:1,
@@ -66,15 +74,30 @@
 
       }
     },
-
-    methods: {
-    toggle_alert: function(index){
-      this.todos[index].alert = this.todos[index].alert?false:true
+    computed:{
+       range_time: function(range){
+          if(this.range<0){
+            return '不提醒'
+          }else{
+            var h=parseInt(this.range/6)+7
+            var m=this.range%6*10
+            m=m?m:'00'
+            var t=h+':'+m
+            return t
+          }
+        },
     },
-    toggle_add: function(){
-      this.add = this.add?false:true
+    methods: {
+      toggle_alert: function(index){
+        this.todos[index].alert = this.todos[index].alert?false:true
+      },
+      toggle_add: function(){
+        this.add = this.add?false:true
+      },
+      reset_time: function(){
+        this.range = -1
+      }
     }
-  }
   }
 </script>
 
@@ -155,6 +178,7 @@
   background-color: #F54263;
   box-shadow: -3px -3px 5px rgba(223,19,40,.2);
 }
+
 .todo-lists{
   margin-top: 50px;
 }
@@ -210,14 +234,85 @@ textarea{
   margin-top: 60px;
   width: 90%;
   border: 0;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 20px;
   font-weight: 100;
 }
-input[trpe='range'] {
-  border: 2;
-  color: #ddd;
+.todo-time-set{
+  margin-left: 20px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 30px;
+  color: #999
 }
-input[type=range]:focus::-webkit-slider-runnable-track {  
-} 
+.todo-time-set span{
+  display: inline-block;
+  width: 48px;
+  height: 30px;
+  line-height: 30px;
+}
+.todo-time-set i{
+  display: inline-block;
+  height: 30px;
+  line-height: 30px;
+  font-size: 30px;
+}
+input[type="range"] {
+    -webkit-appearance: none !important;
+    position: relative;
+    top: -4px;
+    margin-top: 0px;
+    background-color: #00D92C;
+    border-radius: 15px;
+    width: 50%;
+    height: 2px;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    cursor: default;
+    top: 1px;
+    height: 30px;
+    width: 30px;
+    background: #fafafa;
+    border-radius: 100%;
+    border: transparent;
+    box-shadow: 0 1px 2px rgba(100,100,100,.5);
+}
+.ok-btn{
+  position: absolute;
+  right: 15px;
+  display: block;
+  width: 40px!important;
+  height: 40px!important;
+  border: 0;
+  border-radius: 100%;
+  background-color: #00D92C;
+  box-shadow: 0 4px 5px rgba(0,197,40,.25);
+  -webkit-transition: all 0.25s;
+  -o-transition: all 0.25s;
+  transition: all 0.25s;
+}
+.ok-btn:before,.ok-btn:after{
+  content: "";
+  display:block; 
+  position:absolute; 
+  top:10px; 
+  left: 20px; 
+  height:20px; 
+  width:4px; 
+  background-color: rgba(255,255,255,.8);
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.ok-btn:before{
+  top:18px; 
+  left:12px;
+  height:10px;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
 </style>
