@@ -176,9 +176,9 @@
   border-radius: 100%;
   background-color: #00D92C;
   box-shadow: 0 4px 5px rgba(0,197,40,.25);
-  -webkit-transition: all 0.25s;
-  -o-transition: all 0.25s;
-  transition: all 0.25s;
+  -webkit-transition: all 0.25s ease;
+  -o-transition: all 0.25s ease;
+  transition: all 0.25s ease;
   z-index: 10;
 }
 .add-btn:after,.add-btn:before{

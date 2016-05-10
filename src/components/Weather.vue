@@ -1,6 +1,6 @@
 <template>
   <div class="weather">
-    <h2 class="city-name">{{ weatherData.basic.city }}</h2>
+    <h2 class="city-name">{{ weatherData.basic.city }}</h2>{{ mas }}
     <div class="weather-icon">
       <i class="iconfont" v-bind:class="['icon-'+weatherData.now.cond.code]"></i>
       <span>{{ weatherData.now.cond.txt }}</span>
@@ -46,7 +46,7 @@ export default {
     
     data (){  // 在 Vue.extend() 中必须是函数
     return{
-      
+
     }
   }
 }
