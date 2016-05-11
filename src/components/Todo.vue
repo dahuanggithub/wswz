@@ -1,8 +1,9 @@
 <template>
   <div class="todo">
     
-    <div class="todo-add">
-      <span>Todo List</span>
+    <div class="todo-add" v-bind:class="{ 'date-btn-active': date }">
+      <span v-show="!date">Toto Lists</span>
+      <span class="date-btn" v-for="item in date_arr" @click="date_select($index)" v-bind:class="{ 'date-btn-end': !date,'date-btn-top':item.z} ">{{ item.text }}</span>
       <span v-on:click="toggle_add()" class="add-btn" v-bind:class="{ 'add-btn-active': add }"></span>
     </div>
     <div class="add-new" v-bind:class="{ 'add-new-show': add }">
@@ -43,11 +44,9 @@
         modify: false,
         modify_index: 0,
         range: -1,
-
+        date:1,
         add_todo:'',
-        todos: []
-
-
+        todos: [],
       }
     },
     computed:{
@@ -62,6 +61,42 @@
             return t
           }
         },
+        date_arr: function(){
+          var date = new Date()
+          var day_3 = new Date()
+          var day_4 = new Date()
+          var date_utc = date.getTime()
+          day_3.setTime(date_utc + 86400000*3)
+          day_4.setTime(date_utc + 86400000*4)
+          var date_array =[
+          {
+            date: 0,
+            z:false,
+            text: '今天'
+          },
+          {
+            date: 1,
+            z:false,
+            text: '明天'
+          },
+          {
+            date: 2,
+            z:false,
+            text: '后天'
+          },
+          {
+            date: 3,
+            z:false,
+            text:day_3.getDate()
+          },
+          {
+            date: 4,
+            z:false,
+            text: day_4.getDate()
+          }
+          ]
+          return date_array
+        }
     },
     methods: {
       toggle_alert: function(index){
@@ -74,7 +109,17 @@
       },
       reset_time: function(){
         this.range = -1
+      },
+      date_select: function(index){
+        if(this.date){
+          this.date_arr[index].z = true
+        }else{
+          for (var i = 4; i >= 0; i--) {
+            this.date_arr[i].z =false
+          }
+        }
 
+        this.date = this.date?false:true
       },
       submit_todo: function(){
         var text = this.add_todo.trim()
@@ -148,7 +193,7 @@
 }
 .todo{
   position: absolute;
-  margin-top: 270px;
+  margin-top: 260px;
   width: 100%;
   
 }
@@ -156,19 +201,111 @@
   position: absolute;
   width: 100%;
   height: 50px;
-  background: rgba(255,255,255,.8);
+  box-shadow: 0 1px 2px rgba(150,150,150,.1);
 }
 .todo-add span:nth-child(1){
  color: #999;
  font-size: 18px;
  line-height: 50px;
  position: relative;
- left: 15px;
+ top: -4px;
+ left: 60px;
  float: left;
+}
+.todo-add span:nth-child(2){
+  background-color: #0e9cfb;
+  z-index: 1;
+  -webkit-transition: left 0.05s ease;
+  -o-transition: left 0.05s ease;
+  transition: left 0.05s ease;
+}
+.todo-add span:nth-child(3){
+  background-color: #36adfc;
+  z-index: 1;
+  -webkit-transition: left 0.13s ease;
+  -o-transition: left 0.13s ease;
+  transition: left 0.13s ease;
+}
+.todo-add span:nth-child(4){
+  background-color: #5ebdfd;
+  z-index: 1;
+  -webkit-transition: left 0.16s ease;
+  -o-transition: left 0.16s ease;
+  transition: left 0.16s ease;
+}
+.todo-add span:nth-child(5){
+  background-color: #96cefd;
+  z-index: 1;
+  -webkit-transition: left 0.19s ease;
+  -o-transition: left 0.19s ease;
+  transition: left 0.19s ease;
+}
+.todo-add span:nth-child(6){
+  background-color: #afdefd;
+  z-index: 1;
+  -webkit-transition: left 0.22s ease;
+  -o-transition: left 0.22s ease;
+  transition: left 0.22s ease;
+}
+.date-btn-top{
+  z-index: 3!important;
+}
+.date-btn{
+  position: absolute;
+  left: 10px;
+  display: block;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background-color: #3DAEFE;
+  z-index: 10;
+  font-size: 13px;
+  box-shadow: 0 0 2px rgba(0,0,0,.1) inset;
+  text-shadow: 0 1px 2px rgba(0,0,0,.2);
+  color: #fff;
+  line-height: 40px;
+}
+.date-btn-end{
+  -webkit-animation: datebtnend 0.2s cubic-bezier(0, 0.42,1, 0.58) 0.2s;
+  -o-animation: datebtnend 0.2s cubic-bezier(0, 0.42,1, 0.58) 0.2s;
+  animation: datebtnend 0.2s cubic-bezier(0, 0.42,1, 0.58) 0.2s;
+}
+@-webkit-keyframes datebtnend {
+  0%     { left: 10px; }
+  50%   { left: 5px; }
+  100% { left: 10px; }
+}
+@-o-keyframes datebtnend {
+  0%     { left: 10px; }
+  50%   { left: 5px; }
+  100% { left: 10px; }
+}
+@-moz-keyframes datebtnend {
+  0%     { left: 10px; }
+  50%   { left: 5px; }
+  100% { left: 10px; }
+}
+@keyframes datebtnend {
+  0%     { left: 10px; }
+  50%   { left: 5px; }
+  100% { left: 10px; }
+}
+
+.date-btn-active span:nth-child(3){
+  left: 60px;
+}
+.date-btn-active span:nth-child(4){
+  left: 110px;
+}
+.date-btn-active span:nth-child(5){
+  left: 160px;
+}
+.date-btn-active span:nth-child(6){
+  left: 210px;
 }
 .add-btn{
   position: absolute;
-  right: 15px;
+  right: 10px;
   display: block;
   width: 40px;
   height: 40px;
@@ -218,26 +355,29 @@
   float: left;
   width: 15%;
   height: 100%;
-  background-color: #f3f3f3;
+  background-color: #fdfdfd;
 }
 .todo-time div{
   width: 100%;
   height: 50%;
 }
 .todo-time div:nth-child(2){
-  background: #fdfdfd;
+  background: #f5f5f5;
   color: #aaa;
-  font-size: 16px;
+  font-weight: 100;
+  font-size: 13px;
+  line-height: 24px;
 }
 .todo-content{
   padding: 14px 0 14px 20px;
   color: #aaa;
-  width: 75%;
+  width: 85%;
+  height: 50px;
   overflow: hidden;
   float: left;
   text-align: left;
   font-size: 16px;
-  border-top: 1px solid #f3f3f3;
+  border-bottom: 1px solid #f5f5f5;
 }
 .todo-alert-icon{
   font-size: 24px;
