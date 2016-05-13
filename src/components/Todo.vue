@@ -13,7 +13,7 @@
     <div class="todo-time-set" v-show="add">
       <i class="iconfont_todo" v-bind:class="{ 'todo-alert-icon-true': range>=0 }" @click="reset_time">&#xe600;</i>
       <span>{{ range_time }}</span>
-      <input type="range" name="points" min="-1" max="72" v-model = "range"/>
+      <input type="range" name="points" min="-1" max="102" v-model = "range"/>
 
       <span class="ok-btn" @click="submit_todo"></span>
 
@@ -37,14 +37,18 @@
 
 
 <script>
+import localdb from './localdb'
+const Notes = new localdb('notes', 'Array', true)
+
   export default {
     data: function() {
       return{
         add: false,
         modify: false,
+        date: false,
+        date_selected:'',
         modify_index: 0,
         range: -1,
-        date:1,
         add_todo:'',
         todos: [],
       }
@@ -54,7 +58,7 @@
           if(this.range<0){
             return '不提醒'
           }else{
-            var h=parseInt(this.range/6)+7
+            var h=parseInt(this.range/6)+5
             var m=this.range%6*10
             m=m?m:'00'
             var t=h+':'+m
@@ -62,40 +66,23 @@
           }
         },
         date_arr: function(){
-          var date = new Date()
-          var day_3 = new Date()
-          var day_4 = new Date()
-          var date_utc = date.getTime()
-          day_3.setTime(date_utc + 86400000*3)
-          day_4.setTime(date_utc + 86400000*4)
-          var date_array =[
-          {
-            date: 0,
-            z:false,
-            text: '今天'
-          },
-          {
-            date: 1,
-            z:false,
-            text: '明天'
-          },
-          {
-            date: 2,
-            z:false,
-            text: '后天'
-          },
-          {
-            date: 3,
-            z:false,
-            text:day_3.getDate()
-          },
-          {
-            date: 4,
-            z:false,
-            text: day_4.getDate()
+          let date_array =[]
+          let mydate = new Date()
+          let date_utc = mydate.getTime()
+          for (var i = 4; i >= 0; i--) {
+            let date_temp = new Date()
+            date_temp.setTime(date_utc + 86400000*i)
+            let date = date_temp.getFullYear()*10000+date_temp.getMonth()*100+date_temp.getDate()
+            date_array[i] = {date: date,z: false,text: date_temp.getDate()}
           }
-          ]
+          date_array[0].text = '今天'
+          date_array[0].z = true
+          date_array[1].text = '明天'
           return date_array
+        },
+        date_today: function(){
+          let mydate = new Date()
+          return mydate.getFullYear()*10000+mydate.getMonth()*100+mydate.getDate()
         }
     },
     methods: {
@@ -113,18 +100,21 @@
       date_select: function(index){
         if(this.date){
           this.date_arr[index].z = true
+          this.date_selected = this.date_arr[index].date
         }else{
           for (var i = 4; i >= 0; i--) {
             this.date_arr[i].z =false
           }
         }
-
         this.date = this.date?false:true
       },
       submit_todo: function(){
-        var text = this.add_todo.trim()
-        var time = this.range_time.trim()
-        var range = this.range
+        let notes = Notes
+        let text = this.add_todo.trim()
+        let time = this.range_time.trim()
+        let range = this.range
+        let date = this.date_selected?this.date_selected:this.date_today
+
         if(this.modify == true){
           var index = this.modify_index
           if(text){
@@ -148,9 +138,11 @@
         }
         if(text){
           if(time=='不提醒'){
-          this.todos.push({content: text,alert: false,time:'',range: -1})
+            this.todos.push({content: text,alert: false,time:'',range: -1})
+            notes.add({content: text,alert: false,time:'',range: -1,date: date})
           }else{
             this.todos.push({content: text,alert: true,time: time,range: range})
+            notes.add({content: text,alert: true,time:'',range: range,date: date})
             this.range = -1
           }
           this.add = false
