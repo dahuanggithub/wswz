@@ -27,7 +27,7 @@
           </div>
           <div>{{ todo.time }}</div>
         </div>
-        <div class="todo-content" @click="modify_todo($index)">
+        <div class="todo-content" @click="modify_todo($index,todo._id)">
           {{ todo.content }}
         </div>
       </div>
@@ -48,6 +48,7 @@ const Notes = new localdb('notes', 'Array', true)
         date: false,
         date_selected:'',
         modify_index: 0,
+        modify_id: 0,
         range: -1,
         add_todo:'',
         todos: [],
@@ -83,7 +84,20 @@ const Notes = new localdb('notes', 'Array', true)
         date_today: function(){
           let mydate = new Date()
           return mydate.getFullYear()*10000+mydate.getMonth()*100+mydate.getDate()
+        },
+        todos_local: function(){
+          let notes = Notes
+          let respose = notes.get()
+          return respose
+        },
+        todos_one: function(){
+          let date = this.date_selected?this.date_selected:this.date_today
         }
+
+    },
+    ready: function(){
+      let notes = Notes
+      this.todos = notes.get()
     },
     methods: {
       toggle_alert: function(index){
@@ -116,19 +130,41 @@ const Notes = new localdb('notes', 'Array', true)
         let date = this.date_selected?this.date_selected:this.date_today
 
         if(this.modify == true){
-          var index = this.modify_index
+          let index = this.modify_index
+          let id = this.modify_id
+          let query = {'_id': id}
+          let opts ={limit: 1,sort: 1, sortBy: '_id',skip: 0}
+          console.log(Notes.findOne(query, opts).content)
           if(text){
             this.todos[index].content = text
             this.todos[index].range = range
+            let notes = []
             if(time == '不提醒'){
               this.todos[index].alert = false
+              notes.push(Notes.find(query,opts))
+              notes.forEach(note=>{
+                note.content = text
+                note.range = range
+                note.alert = false
+                note.date = date
+                Notes.save(note)
+              })
             }else{
               this.todos[index].alert = true
               this.todos[index].time = time
-              this.todos[index].range = range
+              notes.push(Notes.find(query,opts))
+              notes.forEach(note=>{
+                note.content = text
+                note.range = range
+                note.alert = true
+                note.time = time
+                note.date = date
+                Notes.save(note)
+              })
               this.range = -1
             }
           }else{
+            Notes.remove('_id',id)
             this.todos.splice(index,1)
           }
           this.add = false
@@ -138,24 +174,29 @@ const Notes = new localdb('notes', 'Array', true)
         }
         if(text){
           if(time=='不提醒'){
-            this.todos.push({content: text,alert: false,time:'',range: -1})
             notes.add({content: text,alert: false,time:'',range: -1,date: date})
+            this.todos = notes.get()
           }else{
-            this.todos.push({content: text,alert: true,time: time,range: range})
-            notes.add({content: text,alert: true,time:'',range: range,date: date})
+            notes.add({content: text,alert: true,time: time,range: range,date: date})
+            this.todos = notes.get()
             this.range = -1
           }
           this.add = false
           this.add_todo = ''
         }
       },
-      modify_todo: function(index){
+      modify_todo: function(index,id){
+        let notes = Notes
+        let query = {'_id': id}
+        let opts ={limit: 1,sort: 1, sortBy: '_id',skip: 0}
+        let todo_select = notes.findOne(query, opts)
         this.add = true
         this.modify = true
         this.modify_index = index
-        this.add_todo = this.todos[index].content
-        if(this.todos[index].range&&this.todos[index].alert==true){
-          this.range = this.todos[index].range
+        this.modify_id = id
+        this.add_todo = todo_select.content
+        if(todo_select.range&&todo_select.alert==true){
+          this.range = todo_select.range
         }else{
           this.range = -1
         }
