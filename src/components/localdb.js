@@ -251,20 +251,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       }, {
         key: 'remove',
-        value: function remove(key, value) {
+        value: function remove(key, value, opts) {
           var collection = this.get();
 
           if (this.type === 'Array') {
             if (collection.length === 0) {
               return this;
             }
-            collection = collection.filter(function (obj) {
-              if (obj[key] === value) {
-                return false;
-              } else {
-                return true;
-              }
-            });
+            if (opts === 'less'){
+              collection = collection.filter(function (obj) {
+                if (obj[key] < value) {
+                  alert(obj[key])
+                  return false;
+                } else {
+                  return true;
+                }
+              });
+            }else{
+              collection = collection.filter(function (obj) {
+                if (obj[key] === value) {
+                  return false;
+                } else {
+                  return true;
+                }
+              });
+            }
             for (var i = 0; i < collection.length; i++) {
               collection[i].index = i;
             }

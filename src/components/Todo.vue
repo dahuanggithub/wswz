@@ -20,14 +20,14 @@
     </div>
     </div>
     <div class="todo-lists">
-      <div class="todo-list" v-for = "todo in todos">
+      <div class="todo-list" v-for = "todo in todos_one">
         <div class="todo-time">
-          <div v-on:click="toggle_alert($index)">
+          <div v-on:click="toggle_alert(todo._id)">
             <i class="iconfont_todo todo-alert-icon" v-bind:class="{ 'todo-alert-icon-true': todo.alert }">&#xe600;</i>
           </div>
           <div>{{ todo.time }}</div>
         </div>
-        <div class="todo-content" @click="modify_todo($index,todo._id)">
+        <div class="todo-content" @click="modify_todo(todo._id)">
           {{ todo.content }}
         </div>
       </div>
@@ -47,11 +47,11 @@ const Notes = new localdb('notes', 'Array', true)
         modify: false,
         date: false,
         date_selected:'',
-        modify_index: 0,
+        
         modify_id: 0,
         range: -1,
         add_todo:'',
-        todos: [],
+        todos: []
       }
     },
     computed:{
@@ -73,7 +73,7 @@ const Notes = new localdb('notes', 'Array', true)
           for (var i = 4; i >= 0; i--) {
             let date_temp = new Date()
             date_temp.setTime(date_utc + 86400000*i)
-            let date = date_temp.getFullYear()*10000+date_temp.getMonth()*100+date_temp.getDate()
+            let date = date_temp.getFullYear()*10000+(date_temp.getMonth()+1)*100+date_temp.getDate()
             date_array[i] = {date: date,z: false,text: date_temp.getDate()}
           }
           date_array[0].text = '今天'
@@ -83,7 +83,7 @@ const Notes = new localdb('notes', 'Array', true)
         },
         date_today: function(){
           let mydate = new Date()
-          return mydate.getFullYear()*10000+mydate.getMonth()*100+mydate.getDate()
+          return mydate.getFullYear()*10000+(mydate.getMonth()+1)*100+mydate.getDate()
         },
         todos_local: function(){
           let notes = Notes
@@ -92,16 +92,30 @@ const Notes = new localdb('notes', 'Array', true)
         },
         todos_one: function(){
           let date = this.date_selected?this.date_selected:this.date_today
+          return this.todos.filter(function(item){
+            return item.date == date
+          });
         }
-
     },
     ready: function(){
       let notes = Notes
+      Notes.remove('date',this.date_today,'less')
       this.todos = notes.get()
+     
     },
     methods: {
-      toggle_alert: function(index){
+      toggle_alert: function(id){
+        let index = ''
+        this.todos.forEach(item=>{ if(item._id ===id){ index=item.index } })
         this.todos[index].alert = this.todos[index].alert?false:true
+        let query = {'_id': id}
+        let opts ={limit: 1,sort: 1, sortBy: '_id',skip: 0}
+        Notes.find(query,opts
+        notes.push(Notes.find(query,opts))
+        notes.forEach(note=>{
+          note.alert =note.alert?false:true
+          Notes.save(note)
+        })
       },
       toggle_add: function(){
         this.add_todo = ''
@@ -128,13 +142,12 @@ const Notes = new localdb('notes', 'Array', true)
         let time = this.range_time.trim()
         let range = this.range
         let date = this.date_selected?this.date_selected:this.date_today
-
         if(this.modify == true){
-          let index = this.modify_index
           let id = this.modify_id
           let query = {'_id': id}
           let opts ={limit: 1,sort: 1, sortBy: '_id',skip: 0}
-          console.log(Notes.findOne(query, opts).content)
+          let index = ''
+          this.todos.forEach(item=>{ if(item._id ===id){ index=item.index } })
           if(text){
             this.todos[index].content = text
             this.todos[index].range = range
@@ -185,14 +198,13 @@ const Notes = new localdb('notes', 'Array', true)
           this.add_todo = ''
         }
       },
-      modify_todo: function(index,id){
+      modify_todo: function(id){
         let notes = Notes
         let query = {'_id': id}
         let opts ={limit: 1,sort: 1, sortBy: '_id',skip: 0}
         let todo_select = notes.findOne(query, opts)
         this.add = true
         this.modify = true
-        this.modify_index = index
         this.modify_id = id
         this.add_todo = todo_select.content
         if(todo_select.range&&todo_select.alert==true){
