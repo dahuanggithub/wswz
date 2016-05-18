@@ -106,21 +106,21 @@ const Notes = new localdb('notes', 'Array', true)
     methods: {
       toggle_alert: function(id){
         let index = ''
+        let notes = []
         this.todos.forEach(item=>{ if(item._id ===id){ index=item.index } })
-        this.todos[index].alert = this.todos[index].alert?false:true
+        this.todos[index].alert = !this.todos[index].alert
         let query = {'_id': id}
         let opts ={limit: 1,sort: 1, sortBy: '_id',skip: 0}
-        Notes.find(query,opts
         notes.push(Notes.find(query,opts))
         notes.forEach(note=>{
-          note.alert =note.alert?false:true
+          note.alert = !note.alert
           Notes.save(note)
         })
       },
       toggle_add: function(){
         this.add_todo = ''
         this.range = -1
-        this.add = this.add?false:true
+        this.add = !this.add
       },
       reset_time: function(){
         this.range = -1
@@ -134,7 +134,7 @@ const Notes = new localdb('notes', 'Array', true)
             this.date_arr[i].z =false
           }
         }
-        this.date = this.date?false:true
+        this.date = !this.date
       },
       submit_todo: function(){
         let notes = Notes

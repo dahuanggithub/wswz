@@ -46,7 +46,8 @@ export default {
     
     data (){  // 在 Vue.extend() 中必须是函数
     return{
-
+      weatherData: {basic:{city:'',update:{loc:''}},now:{tmp:'',cond:{txt:''}},daily_forecast:[{tmp:{min:'',max:''}}]},
+      weather_5d: []
     }
   }
 }
